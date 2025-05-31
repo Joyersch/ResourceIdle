@@ -59,17 +59,12 @@ public sealed class MenuManager : IUpdateable, IDrawable
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp,
-            transformMatrix: _scene.Camera.CameraMatrix);
-
         _settingsButton.Draw(spriteBatch);
 
         if (_onSettings)
             _settings.Draw(spriteBatch);
 
         _cursor.Draw(spriteBatch);
-
-        spriteBatch.End();
     }
 
     private void ShowSettings()

@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Input;
 using ResourceIdle.Menu;
 using ResourceIdle.Menu.Backdrops;
 using ResourceIdle.Menu.Buttons;
+using ResourceIdle.World;
 
 namespace ResourceIdle;
 
@@ -16,6 +17,7 @@ public sealed class Game : ExtendedGame
     private bool _keyWasPressed;
 
     private MenuManager _menuManager;
+    private Cave _cave;
 
     public Game()
     {
@@ -35,6 +37,8 @@ public sealed class Game : ExtendedGame
         base.Initialize();
 
         _menuManager = new MenuManager(Scene);
+        _cave = new Cave(Scene.Display.Scale);
+
     }
 
     protected override void LoadContent()
@@ -45,6 +49,8 @@ public sealed class Game : ExtendedGame
         SettingsButton.Texture = Content.GetTexture("buttons/settings");
 
         SettingsBackdrop.Texture = Content.GetTexture("backdrops/settings");
+
+        Cave.Texture = Content.GetTexture("world/cave");
     }
 
     protected override void Update(GameTime gameTime)
@@ -75,7 +81,13 @@ public sealed class Game : ExtendedGame
     {
         GraphicsDevice.Clear(Color.CornflowerBlue);
 
+        SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp,
+            transformMatrix: Scene.Camera.CameraMatrix);
+
+        _cave.Draw(SpriteBatch);
         _menuManager.Draw(SpriteBatch);
+
+        SpriteBatch.End();
 
         base.Draw(gameTime);
         DrawConsole();
