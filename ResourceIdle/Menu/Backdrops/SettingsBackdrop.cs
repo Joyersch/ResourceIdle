@@ -24,8 +24,8 @@ public sealed class SettingsBackdrop : IDrawable, IMoveable
     private readonly Rectangle _rightBottomCorner = new(32, 32, 16, 16);
 
     private float _unit = 16;
-    private float _width = 3;
-    private float _height = 3;
+    private float _width = 16;
+    private float _height = 9;
 
     private Vector2 _position;
     private Vector2 _size;
@@ -33,7 +33,8 @@ public sealed class SettingsBackdrop : IDrawable, IMoveable
 
     public SettingsBackdrop(float scale)
     {
-        _size = new Vector2(_width, _height) * scale;
+        _size = new Vector2(_width, _height) * _unit * scale;
+        _position = Vector2.Zero;
         _scale = scale;
     }
 

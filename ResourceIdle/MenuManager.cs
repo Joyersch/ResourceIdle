@@ -22,6 +22,7 @@ public sealed class MenuManager : IUpdateable, IDrawable
 
     private SettingsButton _settingsButton;
     private Settings _settings;
+    private bool _onSettings;
 
     public MenuManager(Scene scene)
     {
@@ -52,8 +53,8 @@ public sealed class MenuManager : IUpdateable, IDrawable
 
         _settingsButton.UpdateInteraction(gameTime, _cursor);
         _settingsButton.Update(gameTime);
-
-        _settings.Update(gameTime);
+        if (_onSettings)
+            _settings.Update(gameTime);
     }
 
     public void Draw(SpriteBatch spriteBatch)
@@ -63,7 +64,8 @@ public sealed class MenuManager : IUpdateable, IDrawable
 
         _settingsButton.Draw(spriteBatch);
 
-        _settings.Draw(spriteBatch);
+        if (_onSettings)
+            _settings.Draw(spriteBatch);
 
         _cursor.Draw(spriteBatch);
 
@@ -73,5 +75,6 @@ public sealed class MenuManager : IUpdateable, IDrawable
     private void ShowSettings()
     {
         Log.Information("Settings");
+        _onSettings = !_onSettings;
     }
 }

@@ -5,7 +5,7 @@ using ResourceIdle.Menu.Backdrops;
 
 namespace ResourceIdle.Menu;
 
-public sealed class Settings : IManageable
+public sealed class Settings : IManageable, IInteractable
 {
     public Rectangle Rectangle => _backdrop.Rectangle;
 
@@ -18,6 +18,10 @@ public sealed class Settings : IManageable
             .OnCenter()
             .Centered()
             .Apply();
+    }
+
+    public void UpdateInteraction(GameTime gameTime, IHitbox toCheck)
+    {
     }
 
     public void Update(GameTime gameTime)
