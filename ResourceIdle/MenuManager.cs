@@ -67,6 +67,6 @@ public sealed class MenuManager : IUpdateable, IInteractable, IDrawable
 
     public void ToggleCaveView(Cave cave)
     {
-        Log.Write(cave.Id);
+        Log.Write(cave.Data.Id);
     }
 }

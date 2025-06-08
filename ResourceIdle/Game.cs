@@ -5,7 +5,6 @@ using Joyersch.Monogame.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using ResourceIdle.Menu;
 using ResourceIdle.Menu.Backdrops;
 using ResourceIdle.Menu.Buttons;
 using ResourceIdle.World;
@@ -48,6 +47,8 @@ public sealed class Game : ExtendedGame
         _mousePointer = new MousePointer(Scene);
         _positionListener = new PositionListener();
         _positionListener.Add(_mousePointer, _cursor);
+
+        Console.Context.RegisterContext("world_manager", _worldManager);
     }
 
     protected override void LoadContent()

@@ -30,7 +30,6 @@
       <ProjectReference Include="..\..\Joyersch.Monogame\Joyersch.Monogame\Joyersch.Monogame.csproj" />
     </ItemGroup>
     <ItemGroup>
-      <Folder Include="Commands\" />
       <Folder Include="Content\Textures\backdrops\" />
       <Folder Include="Inventory\" />
     </ItemGroup>
