@@ -6,19 +6,17 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ResourceIdle.Menu;
 using ResourceIdle.Menu.Buttons;
+using ResourceIdle.World;
 using IDrawable = Joyersch.Monogame.IDrawable;
 using IUpdateable = Joyersch.Monogame.IUpdateable;
 
 namespace ResourceIdle;
 
-public sealed class MenuManager : IUpdateable, IDrawable
+public sealed class MenuManager : IUpdateable, IInteractable, IDrawable
 {
     public Rectangle Rectangle => Rectangle.Empty;
 
     private readonly Scene _scene;
-    private readonly Cursor _cursor;
-    private readonly MousePointer _mousePointer;
-    private readonly PositionListener _positionListener;
 
     private SettingsButton _settingsButton;
     private Settings _settings;
@@ -27,10 +25,6 @@ public sealed class MenuManager : IUpdateable, IDrawable
     public MenuManager(Scene scene)
     {
         _scene = scene;
-        _cursor = new Cursor(scene.Display.Scale * 4);
-        _mousePointer = new MousePointer(scene);
-        _positionListener = new PositionListener();
-        _positionListener.Add(_mousePointer, _cursor);
 
         _settingsButton = new SettingsButton(_scene.Display.Scale * 2);
         _settingsButton.Move(Vector2.One);
@@ -45,13 +39,13 @@ public sealed class MenuManager : IUpdateable, IDrawable
         _settings = new Settings(scene);
     }
 
+    public void UpdateInteraction(GameTime gameTime, IHitbox toCheck)
+    {
+        _settingsButton.UpdateInteraction(gameTime, toCheck);
+    }
+
     public void Update(GameTime gameTime)
     {
-        _mousePointer.Update(gameTime);
-        _cursor.Update(gameTime);
-        _positionListener.Update(gameTime);
-
-        _settingsButton.UpdateInteraction(gameTime, _cursor);
         _settingsButton.Update(gameTime);
         if (_onSettings)
             _settings.Update(gameTime);
@@ -63,13 +57,16 @@ public sealed class MenuManager : IUpdateable, IDrawable
 
         if (_onSettings)
             _settings.Draw(spriteBatch);
-
-        _cursor.Draw(spriteBatch);
     }
 
     private void ShowSettings()
     {
         Log.Information("Settings");
         _onSettings = !_onSettings;
+    }
+
+    public void ToggleCaveView(Cave cave)
+    {
+        Log.Write(cave.Id);
     }
 }

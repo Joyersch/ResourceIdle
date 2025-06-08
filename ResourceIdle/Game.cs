@@ -1,4 +1,5 @@
 ﻿using Joyersch.Monogame;
+using Joyersch.Monogame.Listener;
 using Joyersch.Monogame.Ui;
 using Joyersch.Monogame.UI;
 using Microsoft.Xna.Framework;
@@ -17,7 +18,11 @@ public sealed class Game : ExtendedGame
     private bool _keyWasPressed;
 
     private MenuManager _menuManager;
-    private Cave _cave;
+    private WorldManager _worldManager;
+
+    private Cursor _cursor;
+    private MousePointer _mousePointer;
+    private PositionListener _positionListener;
 
     public Game()
     {
@@ -37,8 +42,12 @@ public sealed class Game : ExtendedGame
         base.Initialize();
 
         _menuManager = new MenuManager(Scene);
-        _cave = new Cave(Scene.Display.Scale);
+        _worldManager = new WorldManager(Scene, _menuManager);
 
+        _cursor = new Cursor(Scene.Display.Scale * 4);
+        _mousePointer = new MousePointer(Scene);
+        _positionListener = new PositionListener();
+        _positionListener.Add(_mousePointer, _cursor);
     }
 
     protected override void LoadContent()
@@ -61,6 +70,13 @@ public sealed class Game : ExtendedGame
                 Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            _mousePointer.Update(gameTime);
+            _cursor.Update(gameTime);
+            _positionListener.Update(gameTime);
+
+            _worldManager.UpdateInteraction(gameTime, _cursor);
+            _worldManager.Update(gameTime);
+            _menuManager.UpdateInteraction(gameTime, _cursor);
             _menuManager.Update(gameTime);
         }
 
@@ -84,8 +100,9 @@ public sealed class Game : ExtendedGame
         SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp,
             transformMatrix: Scene.Camera.CameraMatrix);
 
-        _cave.Draw(SpriteBatch);
+        _worldManager.Draw(SpriteBatch);
         _menuManager.Draw(SpriteBatch);
+        _cursor.Draw(SpriteBatch);
 
         SpriteBatch.End();
 
