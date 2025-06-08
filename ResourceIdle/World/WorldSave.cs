@@ -5,7 +5,7 @@ namespace ResourceIdle.World;
 
 public class WorldSave : ISave
 {
-    public List<CaveData> CaveData { get; set; }
+    public List<CaveData> CaveData { get; set; } = [];
 
     public void Reset()
     {

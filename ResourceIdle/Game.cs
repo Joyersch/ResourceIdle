@@ -1,4 +1,5 @@
-﻿using Joyersch.Monogame;
+﻿using System;
+using Joyersch.Monogame;
 using Joyersch.Monogame.Listener;
 using Joyersch.Monogame.Ui;
 using Joyersch.Monogame.UI;
@@ -27,6 +28,11 @@ public sealed class Game : ExtendedGame
     {
         IsConsoleEnabled = true;
         IsFixedTimeStep = false;
+        SaveDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
+                        "/Joyersch/ResourceIdle/";
+        SaveFile = "debug";
+        SavePrefix = "";
+        SaveType = "idle";
     }
 
     protected override void Initialize()
@@ -34,6 +40,7 @@ public sealed class Game : ExtendedGame
         Graphics.PreferredBackBufferWidth = 1280;
         Graphics.PreferredBackBufferHeight = 720;
         Graphics.ApplyChanges();
+
         _scaleDeviceHandler = new ScaleDeviceHandler(Graphics, GraphicsAdapter.DefaultAdapter);
         _scaleDeviceHandler.ScaleToScreen();
         _scaleDeviceHandler.Fullscreen();
@@ -41,14 +48,16 @@ public sealed class Game : ExtendedGame
         base.Initialize();
 
         _menuManager = new MenuManager(Scene);
-        _worldManager = new WorldManager(Scene, _menuManager);
+        _worldManager = new WorldManager(Scene, SettingsAndSaveManager, _menuManager);
 
         _cursor = new Cursor(Scene.Display.Scale * 4);
         _mousePointer = new MousePointer(Scene);
         _positionListener = new PositionListener();
         _positionListener.Add(_mousePointer, _cursor);
 
+
         Console.Context.RegisterContext("world_manager", _worldManager);
+        Console.Context.RegisterContext("save_manager", SettingsAndSaveManager);
     }
 
     protected override void LoadContent()
