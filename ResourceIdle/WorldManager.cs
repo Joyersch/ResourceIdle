@@ -27,6 +27,10 @@ public sealed class WorldManager : IManageable, IInteractable
 
     public void LoadSave(WorldSave save)
     {
+        // clear old save!
+        _caves.Clear();
+
+        // load new save
         foreach (var data in save.CaveData)
             SpawnCave(data);
 
