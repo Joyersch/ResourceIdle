@@ -48,13 +48,15 @@ public sealed class Game : ExtendedGame
         base.Initialize();
 
         _menuManager = new MenuManager(Scene);
-        _worldManager = new WorldManager(Scene, SettingsAndSaveManager, _menuManager);
+
+        var save = SettingsAndSaveManager.GetSave<WorldSave>();
+        _worldManager = new WorldManager(Scene, save);
+        _worldManager.MenuEvent += _menuManager.HandleMenuEvent;
 
         _cursor = new Cursor(Scene.Display.Scale * 4);
         _mousePointer = new MousePointer(Scene);
         _positionListener = new PositionListener();
         _positionListener.Add(_mousePointer, _cursor);
-
 
         Console.Context.RegisterContext("world_manager", _worldManager);
         Console.Context.RegisterContext("save_manager", SettingsAndSaveManager);

@@ -65,8 +65,21 @@ public sealed class MenuManager : IUpdateable, IInteractable, IDrawable
         _onSettings = !_onSettings;
     }
 
-    public void ToggleCaveView(Cave cave)
+    public void HandleMenuEvent(WorldMenuElement @event, object sender)
     {
-        Log.Write(cave.Data.Id);
+        switch (@event)
+        {
+            case WorldMenuElement.Cave:
+                ToggleCaveView((Cave)sender);
+                break;
+            default:
+                Log.Error($"No Handling for the given event {@event}");
+                break;
+        }
+    }
+
+    private void ToggleCaveView(Cave cave)
+    {
+        Log.Write(cave.Data.Generated.ToString());
     }
 }

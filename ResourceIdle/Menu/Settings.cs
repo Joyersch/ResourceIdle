@@ -13,7 +13,7 @@ public sealed class Settings : IManageable, IInteractable
 
     public Settings(Scene scene)
     {
-        _backdrop = new SettingsBackdrop(scene.Display.Scale * 4);
+        _backdrop = new SettingsBackdrop(scene.Display.Scale * 3);
         _backdrop.InRectangle(scene.Camera)
             .OnCenter()
             .Centered()

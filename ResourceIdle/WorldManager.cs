@@ -1,6 +1,6 @@
+using System;
 using System.Collections.Generic;
 using Joyersch.Monogame;
-using Joyersch.Monogame.Storage;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ResourceIdle.World;
@@ -10,19 +10,18 @@ namespace ResourceIdle;
 public sealed class WorldManager : IManageable, IInteractable
 {
     private readonly Scene _scene;
-    private readonly SettingsAndSaveManager<string> _saveManager;
-    private readonly MenuManager _menuManager;
     public Rectangle Rectangle => Rectangle.Empty;
     private List<Cave> _caves;
 
-    public WorldManager(Scene scene, SettingsAndSaveManager<string> saveManager, MenuManager menuManager)
+    private PlayerData _playerData;
+
+    public Action<WorldMenuElement, object> MenuEvent;
+
+    public WorldManager(Scene scene, WorldSave save)
     {
         _scene = scene;
-        _saveManager = saveManager;
-        _menuManager = menuManager;
         _caves = new();
 
-        var save = _saveManager.GetSave<WorldSave>();
         LoadSave(save);
     }
 
@@ -30,6 +29,8 @@ public sealed class WorldManager : IManageable, IInteractable
     {
         foreach (var data in save.CaveData)
             SpawnCave(data);
+
+        _playerData = save.PlayerData;
     }
 
     public void UpdateInteraction(GameTime gameTime, IHitbox toCheck)
@@ -50,13 +51,21 @@ public sealed class WorldManager : IManageable, IInteractable
 
     public Cave SpawnCave(CaveData caveData = null, Vector2? position = null)
     {
-        var data = caveData ?? new CaveData() { Id = "test_id" };
+        var data = caveData ?? new CaveData();
         if (position.HasValue)
             data.Position = position!.Value;
 
         var cave = new Cave(data, _scene.Display.Scale * 4);
-        cave.Clicked += cave => { _menuManager.ToggleCaveView(cave); };
+        cave.Clicked += CaveClicked;
         _caves.Add(cave);
         return cave;
+    }
+
+    private void CaveClicked(Cave cave)
+    {
+        cave.Data.Generated++;
+        _playerData.Inventory[Resource.Rock]++;
+
+        MenuEvent?.Invoke(WorldMenuElement.Cave, cave);
     }
 }
