@@ -1,3 +1,4 @@
+using System;
 using Joyersch.Monogame;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,6 +11,8 @@ public sealed class Settings : IManageable, IInteractable
     public Rectangle Rectangle => _backdrop.Rectangle;
 
     private SettingsBackdrop _backdrop;
+
+    public event Action<SettingsElement> SettingsChange;
 
     public Settings(Scene scene)
     {

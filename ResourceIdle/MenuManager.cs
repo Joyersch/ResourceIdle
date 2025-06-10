@@ -1,3 +1,4 @@
+using System;
 using Joyersch.Monogame;
 using Joyersch.Monogame.Listener;
 using Joyersch.Monogame.Logging;
@@ -22,6 +23,8 @@ public sealed class MenuManager : IUpdateable, IInteractable, IDrawable
     private Settings _settings;
     private bool _onSettings;
 
+    public event Action<SettingsElement> SettingsChange;
+
     public MenuManager(Scene scene)
     {
         _scene = scene;
@@ -37,6 +40,10 @@ public sealed class MenuManager : IUpdateable, IInteractable, IDrawable
         _settingsButton.Click += _ => ShowSettings();
 
         _settings = new Settings(scene);
+        _settings.SettingsChange += settings =>
+        {
+            SettingsChange?.Invoke(settings);
+        };
     }
 
     public void UpdateInteraction(GameTime gameTime, IHitbox toCheck)
@@ -65,7 +72,7 @@ public sealed class MenuManager : IUpdateable, IInteractable, IDrawable
         _onSettings = !_onSettings;
     }
 
-    public void HandleMenuEvent(WorldMenuElement @event, object sender)
+    public void HandleMenu(WorldMenuElement @event, object sender)
     {
         switch (@event)
         {

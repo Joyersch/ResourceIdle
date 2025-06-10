@@ -15,7 +15,7 @@ public sealed class WorldManager : IManageable, IInteractable
 
     private PlayerData _playerData;
 
-    public Action<WorldMenuElement, object> MenuEvent;
+    public Action<WorldMenuElement, object> TriggeredMenu;
 
     public WorldManager(Scene scene, WorldSave save)
     {
@@ -70,6 +70,6 @@ public sealed class WorldManager : IManageable, IInteractable
         cave.Data.Generated++;
         _playerData.Inventory[Resource.Rock]++;
 
-        MenuEvent?.Invoke(WorldMenuElement.Cave, cave);
+        TriggeredMenu?.Invoke(WorldMenuElement.Cave, cave);
     }
 }

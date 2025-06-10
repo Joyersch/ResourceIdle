@@ -19,6 +19,7 @@ public sealed class Game : ExtendedGame
 
     private MenuManager _menuManager;
     private WorldManager _worldManager;
+    private SettingsManager _settingsManager;
 
     private Cursor _cursor;
     private MousePointer _mousePointer;
@@ -43,15 +44,18 @@ public sealed class Game : ExtendedGame
 
         _scaleDeviceHandler = new ScaleDeviceHandler(Graphics, GraphicsAdapter.DefaultAdapter);
         _scaleDeviceHandler.ScaleToScreen();
-        _scaleDeviceHandler.Fullscreen();
 
         base.Initialize();
 
+        _settingsManager = new SettingsManager(SettingsAndSaveManager, _scaleDeviceHandler);
+        _settingsManager.Load();
+
         _menuManager = new MenuManager(Scene);
+        _menuManager.SettingsChange += _settingsManager.SettingsChange;
 
         var save = SettingsAndSaveManager.GetSave<WorldSave>();
         _worldManager = new WorldManager(Scene, save);
-        _worldManager.MenuEvent += _menuManager.HandleMenuEvent;
+        _worldManager.TriggeredMenu += _menuManager.HandleMenu;
 
         _cursor = new Cursor(Scene.Display.Scale * 4);
         _mousePointer = new MousePointer(Scene);
