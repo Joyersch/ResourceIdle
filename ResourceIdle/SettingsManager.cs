@@ -7,13 +7,13 @@ namespace ResourceIdle;
 public sealed class SettingsManager
 {
     private readonly SettingsAndSaveManager<string> _saveManager;
-    private readonly ScaleDeviceHandler _deviceHandler;
+    private readonly ScaleDeviceHandler _scaleHandler;
     private GeneralSettings _settings;
 
-    public SettingsManager(SettingsAndSaveManager<string> saveManager, ScaleDeviceHandler deviceHandler)
+    public SettingsManager(SettingsAndSaveManager<string> saveManager, ScaleDeviceHandler scaleHandler)
     {
         _saveManager = saveManager;
-        _deviceHandler = deviceHandler;
+        _scaleHandler = scaleHandler;
         _settings = _saveManager.GetSetting<GeneralSettings>();
     }
 
@@ -23,8 +23,10 @@ public sealed class SettingsManager
             _saveManager.SaveSettings();
         _settings = _saveManager.GetSetting<GeneralSettings>();
 
+        _scaleHandler.ApplyResolution(_settings.Resolution);
+
         if (_settings.Fullscreen)
-            _deviceHandler.Fullscreen();
+            _scaleHandler.Fullscreen();
     }
 
     public void SettingsChange(SettingsElement element)

@@ -24,8 +24,7 @@ public sealed class WorldManager : IManageable, IInteractable
     {
         _scene = scene;
         _caves = new();
-        _background = new Background(scene, 8f);
-Log.Information(scene.Camera.Rectangle.Width.ToString());
+        _background = new Background(scene, scene.Display.Scale * 4f);
         LoadSave(save);
     }
 
@@ -37,6 +36,19 @@ Log.Information(scene.Camera.Rectangle.Width.ToString());
         // load new save
         foreach (var data in save.CaveData)
             SpawnCave(data);
+
+        var size = new Vector2(_background.Single).ToPoint();
+        foreach (var cave in _caves)
+        {
+            var pos = cave.Data.Position * _background.Single;
+            var rec = new Rectangle(pos.ToPoint(), size);
+            cave.InRectangle(new RectangleWrapper(rec))
+                .OnCenter()
+                .Centered()
+                .Apply();
+            Log.Information(pos.ToString());
+            Log.Information(rec.ToString());
+        }
 
         _playerData = save.PlayerData;
     }
@@ -55,7 +67,10 @@ Log.Information(scene.Camera.Rectangle.Width.ToString());
     {
         _background.Draw(spriteBatch);
         foreach (var cave in _caves)
-            cave.Draw(spriteBatch);
+        {
+            if (_scene.Camera.Rectangle.Intersects(cave.Rectangle))
+                cave.Draw(spriteBatch);
+        }
     }
 
     public Cave SpawnCave(CaveData caveData = null, Vector2? position = null)
@@ -64,7 +79,7 @@ Log.Information(scene.Camera.Rectangle.Width.ToString());
         if (position.HasValue)
             data.Position = position!.Value;
 
-        var cave = new Cave(data, _scene.Display.Scale * 4);
+        var cave = new Cave(data, _scene.Display.Scale * 6);
         cave.Clicked += CaveClicked;
         _caves.Add(cave);
         return cave;

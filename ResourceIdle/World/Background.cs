@@ -12,6 +12,9 @@ public class Background : IDrawable
     public Rectangle Rectangle => Rectangle.Empty;
     public static Texture2D Texture;
 
+    private float _single = 16;
+    public float Single => _single * _scale;
+
     public Background(Scene scene, float scale)
     {
         _scene = scene;

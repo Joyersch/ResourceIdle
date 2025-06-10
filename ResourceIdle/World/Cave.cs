@@ -7,19 +7,20 @@ using IDrawable = Joyersch.Monogame.IDrawable;
 
 namespace ResourceIdle.World;
 
-public class Cave : IDrawable, IInteractable, IHitbox
+public class Cave : IMoveable, IDrawable, IInteractable, IHitbox
 {
     public static Texture2D Texture;
     private static Vector2 _imageSize = new(8, 6);
 
     public event Action<Cave> Clicked;
 
-    public Rectangle Rectangle => new(Data.Position.ToPoint(), _size.ToPoint());
+    public Rectangle Rectangle => new(_position.ToPoint(), _size.ToPoint());
     public Rectangle[] Hitbox => [Rectangle];
     public CaveData Data;
 
     private readonly float _scale;
     private MouseActionsMat _mouseMat;
+    private Vector2 _position;
 
     private Vector2 _size => _imageSize * _scale;
 
@@ -28,6 +29,7 @@ public class Cave : IDrawable, IInteractable, IHitbox
     {
         Data = data;
         _scale = scale;
+        _position = Vector2.Zero;
         _mouseMat = new MouseActionsMat(this);
         _mouseMat.Click += delegate { Clicked?.Invoke(this); };
     }
@@ -36,7 +38,7 @@ public class Cave : IDrawable, IInteractable, IHitbox
     {
         spriteBatch.Draw(
             Texture,
-            Data.Position,
+            _position,
             null,
             Color.White,
             0F,
@@ -50,4 +52,13 @@ public class Cave : IDrawable, IInteractable, IHitbox
     {
         _mouseMat.UpdateInteraction(gameTime, toCheck);
     }
+
+    public Vector2 GetPosition()
+        => _position;
+
+    public Vector2 GetSize()
+        => _size;
+
+    public void Move(Vector2 newPosition)
+        => _position = newPosition;
 }

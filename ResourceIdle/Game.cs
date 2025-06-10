@@ -1,6 +1,8 @@
 ﻿using System;
 using Joyersch.Monogame;
 using Joyersch.Monogame.Listener;
+using Joyersch.Monogame.Logging;
+using Joyersch.Monogame.Storage;
 using Joyersch.Monogame.Ui;
 using Joyersch.Monogame.UI;
 using Microsoft.Xna.Framework;
@@ -14,9 +16,9 @@ namespace ResourceIdle;
 
 public sealed class Game : ExtendedGame
 {
-    ScaleDeviceHandler _scaleDeviceHandler;
     private bool _keyWasPressed;
 
+    private ScaleDeviceHandler _scaleDeviceHandler;
     private MenuManager _menuManager;
     private WorldManager _worldManager;
     private SettingsManager _settingsManager;
@@ -42,13 +44,19 @@ public sealed class Game : ExtendedGame
         Graphics.PreferredBackBufferHeight = 720;
         Graphics.ApplyChanges();
 
-        _scaleDeviceHandler = new ScaleDeviceHandler(Graphics, GraphicsAdapter.DefaultAdapter);
-        _scaleDeviceHandler.ScaleToScreen();
-
         base.Initialize();
+
+        _scaleDeviceHandler = new ScaleDeviceHandler(Scene, Graphics, GraphicsAdapter.DefaultAdapter);
+        _scaleDeviceHandler.ScaleChanged += delegate
+        {
+            Console = new DevConsole(Global.CommandProcessor, Scene, Console);
+            Log.Out.UpdateReference(Console);
+        };
 
         _settingsManager = new SettingsManager(SettingsAndSaveManager, _scaleDeviceHandler);
         _settingsManager.Load();
+
+        Scene.Camera.Calculate();
 
         _menuManager = new MenuManager(Scene);
         _menuManager.SettingsChange += _settingsManager.SettingsChange;
@@ -83,6 +91,7 @@ public sealed class Game : ExtendedGame
     {
         if (IsActive)
         {
+            Scene.Update(gameTime);
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
                 Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
@@ -114,7 +123,7 @@ public sealed class Game : ExtendedGame
     {
         GraphicsDevice.Clear(Color.CornflowerBlue);
 
-        SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp,
+        SpriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp,
             transformMatrix: Scene.Camera.CameraMatrix);
 
         _worldManager.Draw(SpriteBatch);
