@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Joyersch.Monogame;
+using Joyersch.Monogame.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ResourceIdle.World;
@@ -11,6 +12,8 @@ public sealed class WorldManager : IManageable, IInteractable
 {
     private readonly Scene _scene;
     public Rectangle Rectangle => Rectangle.Empty;
+
+    private Background _background;
     private List<Cave> _caves;
 
     private PlayerData _playerData;
@@ -21,7 +24,8 @@ public sealed class WorldManager : IManageable, IInteractable
     {
         _scene = scene;
         _caves = new();
-
+        _background = new Background(scene, 8f);
+Log.Information(scene.Camera.Rectangle.Width.ToString());
         LoadSave(save);
     }
 
@@ -49,6 +53,7 @@ public sealed class WorldManager : IManageable, IInteractable
 
     public void Draw(SpriteBatch spriteBatch)
     {
+        _background.Draw(spriteBatch);
         foreach (var cave in _caves)
             cave.Draw(spriteBatch);
     }

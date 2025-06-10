@@ -18,11 +18,11 @@ public class WorldGenerator
         _noise = noise;
     }
 
-    public void Generate(Vector2 position)
+    public float Generate(Vector2 position)
     {
         float x = (position.X - position.X % 16) / 16;
         float y = (position.Y - position.Y % 16) / 16;
 
-        var noise = _noise.GetNoise(x, y);
+        return _noise.GetNoise(x, y);
     }
 }
