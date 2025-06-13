@@ -19,6 +19,7 @@ public sealed class WorldManager : IManageable, IInteractable
     private float _tileScale;
 
     private PlayerData _playerData;
+    public WorldState WorldState;
 
     public Action<WorldMenuElement, object> TriggeredMenu;
 
@@ -27,6 +28,7 @@ public sealed class WorldManager : IManageable, IInteractable
         _scene = scene;
         _caves = new();
         _background = new List<WorldTile>();
+        WorldState = new(save, scene.Display.Scale * 4f);
         _tileScale = scene.Display.Scale * 4f * WorldTile.Single;
         Vector2 topLeft = scene.Camera.RealPosition;
         topLeft.X -= topLeft.X % _tileScale;
@@ -37,26 +39,14 @@ public sealed class WorldManager : IManageable, IInteractable
             for (int x = 0; x < 20; x++)
             {
                 var position = topLeft + new Vector2(x * _tileScale, y * _tileScale);
-                _background.Add(new WorldTile(scene, position,
-                    scene.Display.Scale * 4f, MapToLevel(position, 450, 900)));
+                _background.Add(new WorldTile(scene, WorldState, position,
+                    scene.Display.Scale * 4f));
             }
         }
 
         LoadSave(save);
     }
 
-    private static int MapToLevel(Vector2 v, float minDistance, float maxDistance)
-    {
-        float distance = MathF.Sqrt(v.X * v.X * 0.35f + v.Y * v.Y * 0.65f);
-
-        if (distance <= minDistance)
-            return 0;
-        if (distance >= maxDistance)
-            return 3;
-
-        float t = (distance - minDistance) / (maxDistance - minDistance);
-        return (int)(t * 3);
-    }
 
     public void LoadSave(WorldSave save)
     {
@@ -92,6 +82,12 @@ public sealed class WorldManager : IManageable, IInteractable
 
     public void Update(GameTime gameTime)
     {
+    }
+
+    public void UpdateTiles()
+    {
+        foreach(var tile in _background)
+            tile.UpdateTile();
     }
 
     public void Draw(SpriteBatch spriteBatch)
