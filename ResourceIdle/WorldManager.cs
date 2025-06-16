@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Joyersch.Monogame;
+using Joyersch.Monogame.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ResourceIdle.World;
@@ -57,16 +58,18 @@ public sealed class WorldManager : IManageable, IInteractable
 
     public void LoadSave(WorldSave save)
     {
+        foreach (var cave in _caves)
+        {
+            cave.Dispose();
+        }
         // clear old save!
         _caves.Clear();
 
         // load new save
         foreach (var data in save.CaveData)
-            SpawnCave(data);
-
-        foreach (var cave in _caves)
         {
-            int pos = (int)cave.Data.Position.X + (int)cave.Data.Position.Y * 20;
+            int pos = (int)data.Position.X + (int)data.Position.Y * 20;
+            var cave = SpawnCave(_tiles[pos], data);
 
             cave.InRectangle(_tiles[pos])
                 .OnCenter()
@@ -74,14 +77,13 @@ public sealed class WorldManager : IManageable, IInteractable
                 .Apply();
         }
 
+        Log.Information(save.CaveData.Count.ToString());
+
         _playerData = save.PlayerData;
     }
 
     public void UpdateInteraction(GameTime gameTime, IHitbox toCheck)
     {
-        foreach (var cave in _caves)
-            cave.UpdateInteraction(gameTime, toCheck);
-
         foreach (var tile in _tiles)
             tile.UpdateInteraction(gameTime, toCheck);
     }
@@ -103,13 +105,13 @@ public sealed class WorldManager : IManageable, IInteractable
         _tileSelect.Draw(spriteBatch);
     }
 
-    public Cave SpawnCave(CaveData caveData = null, Vector2? position = null)
+    public Cave SpawnCave(WorldTile tile, CaveData caveData = null, Vector2? position = null)
     {
         var data = caveData ?? new CaveData();
         if (position.HasValue)
             data.Position = position!.Value;
 
-        var cave = new Cave(data, _scene.Display.Scale * 6);
+        var cave = new Cave(data, tile, _scene.Display.Scale * 6);
         cave.Clicked += CaveClicked;
         _caves.Add(cave);
         return cave;
@@ -117,6 +119,7 @@ public sealed class WorldManager : IManageable, IInteractable
 
     private void CaveClicked(Cave cave)
     {
+        // ToDo: show cave menu instead
         cave.Data.Generated++;
         _playerData.Inventory[Resource.Rock]++;
 

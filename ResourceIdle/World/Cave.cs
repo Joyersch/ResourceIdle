@@ -7,7 +7,7 @@ using IDrawable = Joyersch.Monogame.IDrawable;
 
 namespace ResourceIdle.World;
 
-public class Cave : IMoveable, IDrawable, IInteractable, IHitbox
+public sealed class Cave : IMoveable, IDrawable, IHitbox, IDisposable
 {
     public static Texture2D Texture;
     private static Vector2 _imageSize = new(8, 6);
@@ -17,21 +17,26 @@ public class Cave : IMoveable, IDrawable, IInteractable, IHitbox
     public Rectangle Rectangle => new(_position.ToPoint(), _size.ToPoint());
     public Rectangle[] Hitbox => [Rectangle];
     public CaveData Data;
+    private readonly WorldTile _tile;
 
     private readonly float _scale;
-    private MouseActionsMat _mouseMat;
     private Vector2 _position;
 
     private Vector2 _size => _imageSize * _scale;
 
 
-    public Cave(CaveData data, float scale)
+    public Cave(CaveData data, WorldTile tile, float scale)
     {
         Data = data;
+        _tile = tile;
         _scale = scale;
         _position = Vector2.Zero;
-        _mouseMat = new MouseActionsMat(this);
-        _mouseMat.Click += delegate { Clicked?.Invoke(this); };
+        tile.Clicked += OnTileOnClicked;
+    }
+
+    private void OnTileOnClicked(object obj)
+    {
+        Clicked?.Invoke(this);
     }
 
     public void Draw(SpriteBatch spriteBatch)
@@ -48,11 +53,6 @@ public class Cave : IMoveable, IDrawable, IInteractable, IHitbox
             0);
     }
 
-    public void UpdateInteraction(GameTime gameTime, IHitbox toCheck)
-    {
-        _mouseMat.UpdateInteraction(gameTime, toCheck);
-    }
-
     public Vector2 GetPosition()
         => _position;
 
@@ -61,4 +61,9 @@ public class Cave : IMoveable, IDrawable, IInteractable, IHitbox
 
     public void Move(Vector2 newPosition)
         => _position = newPosition;
+
+    public void Dispose()
+    {
+        _tile.Clicked -= OnTileOnClicked;
+    }
 }
