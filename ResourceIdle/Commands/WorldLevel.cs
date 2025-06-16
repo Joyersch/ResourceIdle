@@ -19,8 +19,6 @@ public class WorldLevel : ICommand
         if (!int.TryParse(options[0].ToString(), out int state))
             return ["Bad Options given!"];
 
-        world.WorldState.Level = state;
-        world.UpdateTiles();
         return ["Set state!"];
     }
 }

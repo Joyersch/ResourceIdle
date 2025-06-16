@@ -13,13 +13,13 @@ public sealed class WorldManager : IManageable, IInteractable
     private readonly Scene _scene;
     public Rectangle Rectangle => Rectangle.Empty;
 
-    private List<WorldTile> _background;
+    private List<WorldTile> _tiles;
     private List<Cave> _caves;
 
     private float _tileScale;
 
     private PlayerData _playerData;
-    public WorldState WorldState;
+    private WorldBackground _background;
 
     public Action<WorldMenuElement, object> TriggeredMenu;
 
@@ -27,22 +27,21 @@ public sealed class WorldManager : IManageable, IInteractable
     {
         _scene = scene;
         _caves = new();
-        _background = new List<WorldTile>();
-        WorldState = new(save, scene.Display.Scale * 4f);
+        _tiles = new List<WorldTile>();
         _tileScale = scene.Display.Scale * 4f * WorldTile.Single;
         Vector2 topLeft = scene.Camera.RealPosition;
         topLeft.X -= topLeft.X % _tileScale;
         topLeft.Y += topLeft.Y % _tileScale;
-
         for (int y = 0; y < 12; y++)
         {
             for (int x = 0; x < 20; x++)
             {
                 var position = topLeft + new Vector2(x * _tileScale, y * _tileScale);
-                _background.Add(new WorldTile(scene, WorldState, position,
-                    scene.Display.Scale * 4f));
+                _tiles.Add(new WorldTile(scene, position, scene.Display.Scale * 4f));
             }
         }
+
+        _background = new(topLeft, save, scene.Display.Scale * 4f);
 
         LoadSave(save);
     }
@@ -62,7 +61,7 @@ public sealed class WorldManager : IManageable, IInteractable
         {
             int pos = (int)cave.Data.Position.X + (int)cave.Data.Position.Y * 20;
 
-            cave.InRectangle(_background[pos])
+            cave.InRectangle(_tiles[pos])
                 .OnCenter()
                 .Centered()
                 .Apply();
@@ -76,7 +75,7 @@ public sealed class WorldManager : IManageable, IInteractable
         foreach (var cave in _caves)
             cave.UpdateInteraction(gameTime, toCheck);
 
-        foreach (var tile in _background)
+        foreach (var tile in _tiles)
             tile.UpdateInteraction(gameTime, toCheck);
     }
 
@@ -84,19 +83,9 @@ public sealed class WorldManager : IManageable, IInteractable
     {
     }
 
-    public void UpdateTiles()
-    {
-        foreach(var tile in _background)
-            tile.UpdateTile();
-    }
-
     public void Draw(SpriteBatch spriteBatch)
     {
-        foreach (var tile in _background)
-        {
-            if (_scene.Camera.Rectangle.Intersects(tile.Rectangle))
-                tile.Draw(spriteBatch);
-        }
+        _background.Draw(spriteBatch);
 
         foreach (var cave in _caves)
         {

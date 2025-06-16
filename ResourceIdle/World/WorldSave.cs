@@ -15,6 +15,8 @@ public class WorldSave : ISave
 
     public int WorldSeed { get; set; } = GenerateSeed();
 
+    public int SelectedIsland { get; set; } = 0;
+
     public void Reset()
     {
         PlayerData = GenerateNewPlayerDataSet();

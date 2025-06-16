@@ -61,7 +61,7 @@
 /processorParam:TextureFormat=Color
 /build:Textures/world/cave.png
 
-#begin Textures/world/map.png
+#begin Textures/world/island0.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -71,7 +71,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Textures/world/map.png
+/build:Textures/world/island0.png
 
 #begin Textures/world/select.png
 /importer:TextureImporter

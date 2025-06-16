@@ -83,7 +83,7 @@ public sealed class Game : ExtendedGame
 
         SettingsBackdrop.Texture = Content.GetTexture("backdrops/settings");
 
-        WorldTile.Texture = Content.GetTexture("world/map");
+        WorldBackground.Island0 = Content.GetTexture("world/island0");
         Cave.Texture = Content.GetTexture("world/cave");
     }
 
