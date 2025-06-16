@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Joyersch.Monogame;
-using Joyersch.Monogame.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ResourceIdle.World;
@@ -13,10 +12,10 @@ public sealed class WorldManager : IManageable, IInteractable
     private readonly Scene _scene;
     public Rectangle Rectangle => Rectangle.Empty;
 
+    private WorldTileSelect _tileSelect;
     private List<WorldTile> _tiles;
     private List<Cave> _caves;
 
-    private float _tileScale;
 
     private PlayerData _playerData;
     private WorldBackground _background;
@@ -28,16 +27,25 @@ public sealed class WorldManager : IManageable, IInteractable
         _scene = scene;
         _caves = new();
         _tiles = new List<WorldTile>();
-        _tileScale = scene.Display.Scale * 4f * WorldTile.Single;
+
+        float tileScale = scene.Display.Scale * 4f * WorldTile.Single;
         Vector2 topLeft = scene.Camera.RealPosition;
-        topLeft.X -= topLeft.X % _tileScale;
-        topLeft.Y += topLeft.Y % _tileScale;
+        topLeft.X -= topLeft.X % tileScale;
+        topLeft.Y += topLeft.Y % tileScale;
+
+        _tileSelect = new WorldTileSelect(topLeft - new Vector2(tileScale), scene.Display.Scale * 4f);
+
         for (int y = 0; y < 12; y++)
         {
             for (int x = 0; x < 20; x++)
             {
-                var position = topLeft + new Vector2(x * _tileScale, y * _tileScale);
-                _tiles.Add(new WorldTile(scene, position, scene.Display.Scale * 4f));
+                var position = topLeft + new Vector2(x * tileScale, y * tileScale);
+                var tile = new WorldTile(position, scene.Display.Scale * 4f);
+                tile.Clicked += sender =>
+                {
+                    _tileSelect.Move(((WorldTile)sender).Position);
+                };
+                _tiles.Add(tile);
             }
         }
 
@@ -56,7 +64,6 @@ public sealed class WorldManager : IManageable, IInteractable
         foreach (var data in save.CaveData)
             SpawnCave(data);
 
-        var size = new Vector2(_tileScale).ToPoint();
         foreach (var cave in _caves)
         {
             int pos = (int)cave.Data.Position.X + (int)cave.Data.Position.Y * 20;
@@ -81,6 +88,7 @@ public sealed class WorldManager : IManageable, IInteractable
 
     public void Update(GameTime gameTime)
     {
+        _tileSelect.Update(gameTime);
     }
 
     public void Draw(SpriteBatch spriteBatch)
@@ -92,6 +100,7 @@ public sealed class WorldManager : IManageable, IInteractable
             if (_scene.Camera.Rectangle.Intersects(cave.Rectangle))
                 cave.Draw(spriteBatch);
         }
+        _tileSelect.Draw(spriteBatch);
     }
 
     public Cave SpawnCave(CaveData caveData = null, Vector2? position = null)

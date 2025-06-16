@@ -1,3 +1,4 @@
+using System;
 using Joyersch.Monogame;
 using Joyersch.Monogame.Logging;
 using Joyersch.Monogame.Ui;
@@ -7,24 +8,28 @@ namespace ResourceIdle.World;
 
 public sealed class WorldTile : IInteractable, IHitbox, IRectangle
 {
-    private readonly Scene _scene;
-    private Vector2 _position;
+    public Vector2 Position { get; private set; }
     private readonly float _scale;
     private readonly MouseActionsMat _mouseActionsMat;
 
     public static float Single = 16;
 
-    public Rectangle Rectangle => new(_position.ToPoint(), new Vector2(_scale * Single).ToPoint());
+    public Rectangle Rectangle => new(Position.ToPoint(), new Vector2(_scale * Single).ToPoint());
     public Rectangle[] Hitbox => [Rectangle];
 
-    public WorldTile(Scene scene, Vector2 position, float scale)
+    public event Action<object> Clicked;
+
+    public WorldTile(Vector2 position, float scale)
     {
-        _scene = scene;
-        _position = position;
+        Position = position;
         _scale = scale;
 
         _mouseActionsMat = new MouseActionsMat(this);
-        _mouseActionsMat.Enter += delegate { Log.Information($"Tile at: {_position}"); };
+        _mouseActionsMat.Click += delegate
+        {
+            Log.Information($"Tile at: {Position}");
+            Clicked?.Invoke(this);
+        };
     }
 
     public void UpdateInteraction(GameTime gameTime, IHitbox toCheck)
