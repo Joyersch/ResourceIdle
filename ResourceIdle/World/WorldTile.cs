@@ -3,6 +3,7 @@ using Joyersch.Monogame;
 using Joyersch.Monogame.Logging;
 using Joyersch.Monogame.Ui;
 using Microsoft.Xna.Framework;
+using ResourceIdle.Menu.Backdrops;
 
 namespace ResourceIdle.World;
 
@@ -19,10 +20,14 @@ public sealed class WorldTile : IInteractable, IHitbox, IRectangle
 
     public event Action<object> Clicked;
 
-    public WorldTile(Vector2 position, float scale)
+    public WorldTileData Data { get; private set; }
+
+    public WorldTile(WorldTileData data, Vector2 position, float scale)
     {
         Position = position;
         _scale = scale;
+
+        Data = data;
 
         _mouseActionsMat = new MouseActionsMat(this);
         _mouseActionsMat.Click += delegate

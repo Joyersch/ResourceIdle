@@ -6,6 +6,7 @@ using Joyersch.Monogame.Ui;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ResourceIdle.Menu;
+using ResourceIdle.Menu.Backdrops;
 using ResourceIdle.Menu.Buttons;
 using ResourceIdle.World;
 using IDrawable = Joyersch.Monogame.IDrawable;
@@ -24,6 +25,8 @@ public sealed class MenuManager : IUpdateable, IInteractable, IDrawable
     private bool _onSettings;
 
     public event Action<SettingsElement> SettingsChange;
+
+    private WorldTileInfo _worldTileInfo;
 
     public MenuManager(Scene scene)
     {
@@ -44,6 +47,8 @@ public sealed class MenuManager : IUpdateable, IInteractable, IDrawable
         {
             SettingsChange?.Invoke(settings);
         };
+
+        _worldTileInfo = new WorldTileInfo(_scene.Display.Scale * 4f);
     }
 
     public void UpdateInteraction(GameTime gameTime, IHitbox toCheck)
@@ -61,6 +66,8 @@ public sealed class MenuManager : IUpdateable, IInteractable, IDrawable
     public void Draw(SpriteBatch spriteBatch)
     {
         _settingsButton.Draw(spriteBatch);
+        
+        _worldTileInfo.Draw(spriteBatch);
 
         if (_onSettings)
             _settings.Draw(spriteBatch);
@@ -72,21 +79,16 @@ public sealed class MenuManager : IUpdateable, IInteractable, IDrawable
         _onSettings = !_onSettings;
     }
 
-    public void HandleMenu(WorldMenuElement @event, object sender)
+    public void HandleMenu(WorldTile tile)
     {
-        switch (@event)
-        {
-            case WorldMenuElement.Cave:
-                ToggleCaveView((Cave)sender);
-                break;
-            default:
-                Log.Error($"No Handling for the given event {@event}");
-                break;
-        }
+        _worldTileInfo.Select(tile.Data);
+        _worldTileInfo.Show();
     }
 
     private void ToggleCaveView(Cave cave)
     {
         Log.Write(cave.Data.Generated.ToString());
     }
+
+
 }

@@ -17,11 +17,10 @@ public sealed class WorldManager : IManageable, IInteractable
     private List<WorldTile> _tiles;
     private List<Cave> _caves;
 
-
     private PlayerData _playerData;
-    private WorldBackground _background;
+    private IWorldBackground _background;
 
-    public Action<WorldMenuElement, object> TriggeredMenu;
+    public Action<WorldTile> TriggeredMenu;
 
     public WorldManager(Scene scene, WorldSave save)
     {
@@ -41,16 +40,23 @@ public sealed class WorldManager : IManageable, IInteractable
             for (int x = 0; x < 20; x++)
             {
                 var position = topLeft + new Vector2(x * tileScale, y * tileScale);
-                var tile = new WorldTile(position, scene.Display.Scale * 4f);
+                var anchorLeft = topLeft + new Vector2(1 * tileScale, 1 * tileScale);
+                var anchorRight = topLeft + new Vector2(11 * tileScale, 1 * tileScale);
+                var tile = new WorldTile(
+                    new WorldTileData() { Id = y * 20 + x, Anchor = x >= 10 ?  anchorLeft : anchorRight}, position,
+                    scene.Display.Scale * 4f);
                 tile.Clicked += sender =>
                 {
-                    _tileSelect.Move(((WorldTile)sender).Position);
+                    var t = (WorldTile)sender;
+                    _tileSelect.Move(t.Position);
+                    TriggeredMenu?.Invoke(t);
                 };
                 _tiles.Add(tile);
             }
         }
 
-        _background = new(topLeft, save, scene.Display.Scale * 4f);
+        _background = new Island0(scene.Display.Scale * 4f);
+        _background.Move(topLeft);
 
         LoadSave(save);
     }
@@ -62,6 +68,7 @@ public sealed class WorldManager : IManageable, IInteractable
         {
             cave.Dispose();
         }
+
         // clear old save!
         _caves.Clear();
 
@@ -102,6 +109,7 @@ public sealed class WorldManager : IManageable, IInteractable
             if (_scene.Camera.Rectangle.Intersects(cave.Rectangle))
                 cave.Draw(spriteBatch);
         }
+
         _tileSelect.Draw(spriteBatch);
     }
 
@@ -122,7 +130,5 @@ public sealed class WorldManager : IManageable, IInteractable
         // ToDo: show cave menu instead
         cave.Data.Generated++;
         _playerData.Inventory[Resource.Rock]++;
-
-        TriggeredMenu?.Invoke(WorldMenuElement.Cave, cave);
     }
 }
