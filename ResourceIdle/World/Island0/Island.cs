@@ -13,14 +13,17 @@ public sealed class Island : Island<Background>
     private readonly Scene _scene;
     private readonly PlayerData _playerData;
     private List<Cave> _caves;
-    public Action<WorldTile> TriggeredMenu;
 
-    public Island(Scene scene, PlayerData playerData) : base(scene, playerData, new Background(scene.Display.Scale * 4f))
+    public Island(Scene scene, PlayerData playerData) : base(scene, playerData, new Background(scene.Display.Scale * 4f), new DataMapper())
     {
         _scene = scene;
         _playerData = playerData;
 
         _caves = new();
+        TileClicked += tile =>
+        {
+            Log.Information(tile.Data.Type.ToString());
+        };
     }
 
     public override void LoadSave(ISave save)
@@ -45,8 +48,6 @@ public sealed class Island : Island<Background>
                 .Centered()
                 .Apply();
         }
-
-        Log.Information(s.CaveData.Count.ToString());
     }
     public Cave SpawnCave(WorldTile tile, CaveData caveData = null, Vector2? position = null)
     {

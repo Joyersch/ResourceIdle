@@ -31,7 +31,6 @@ public sealed class WorldTile : IInteractable, IHitbox, IRectangle
         _mouseActionsMat = new MouseActionsMat(this);
         _mouseActionsMat.Click += delegate
         {
-            Log.Information($"Tile at: {Position}");
             Clicked?.Invoke(this);
         };
     }
