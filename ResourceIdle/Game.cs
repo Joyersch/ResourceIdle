@@ -2,7 +2,6 @@
 using Joyersch.Monogame;
 using Joyersch.Monogame.Listener;
 using Joyersch.Monogame.Logging;
-using Joyersch.Monogame.Storage;
 using Joyersch.Monogame.Ui;
 using Joyersch.Monogame.UI;
 using Microsoft.Xna.Framework;
@@ -11,6 +10,7 @@ using Microsoft.Xna.Framework.Input;
 using ResourceIdle.Menu.Backdrops;
 using ResourceIdle.Menu.Buttons;
 using ResourceIdle.World;
+using Island0 = ResourceIdle.World.Island0;
 
 namespace ResourceIdle;
 
@@ -19,7 +19,6 @@ public sealed class Game : ExtendedGame
     private bool _keyWasPressed;
 
     private ScaleDeviceHandler _scaleDeviceHandler;
-    private MenuManager _menuManager;
     private WorldManager _worldManager;
     private SettingsManager _settingsManager;
 
@@ -58,12 +57,8 @@ public sealed class Game : ExtendedGame
 
         Scene.Camera.Calculate();
 
-        _menuManager = new MenuManager(Scene);
-        _menuManager.SettingsChange += _settingsManager.SettingsChange;
-
         var save = SettingsAndSaveManager.GetSave<WorldSave>();
         _worldManager = new WorldManager(Scene, save);
-        _worldManager.TriggeredMenu += _menuManager.HandleMenu;
 
         _cursor = new Cursor(Scene.Display.Scale * 4);
         _mousePointer = new MousePointer(Scene);
@@ -84,10 +79,10 @@ public sealed class Game : ExtendedGame
         SettingsBackdrop.Texture = Content.GetTexture("backdrops/settings");
         WorldTileInfoBackdrop.Texture = Content.GetTexture("backdrops/tileInfo");
 
-        Island0.Texture = Content.GetTexture("world/island0");
+        Island0.Background.Texture = Content.GetTexture("world/island0");
         WorldTileSelect.Texture = Content.GetTexture("world/select");
 
-        Cave.Texture = Content.GetTexture("world/cave");
+        Island0.Cave.Texture = Content.GetTexture("world/cave");
     }
 
     protected override void Update(GameTime gameTime)
@@ -105,8 +100,6 @@ public sealed class Game : ExtendedGame
 
             _worldManager.UpdateInteraction(gameTime, _cursor);
             _worldManager.Update(gameTime);
-            _menuManager.UpdateInteraction(gameTime, _cursor);
-            _menuManager.Update(gameTime);
         }
 
         var keyboardState = Keyboard.GetState();
@@ -130,7 +123,6 @@ public sealed class Game : ExtendedGame
             transformMatrix: Scene.Camera.CameraMatrix);
 
         _worldManager.Draw(SpriteBatch);
-        _menuManager.Draw(SpriteBatch);
         _cursor.Draw(SpriteBatch);
 
         SpriteBatch.End();

@@ -1,11 +1,10 @@
 using System;
 using Joyersch.Monogame;
-using Joyersch.Monogame.Ui;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using IDrawable = Joyersch.Monogame.IDrawable;
 
-namespace ResourceIdle.World;
+namespace ResourceIdle.World.Island0;
 
 public sealed class Cave : IMoveable, IDrawable, IHitbox, IDisposable
 {

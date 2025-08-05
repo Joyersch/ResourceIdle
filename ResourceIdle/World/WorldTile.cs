@@ -3,7 +3,6 @@ using Joyersch.Monogame;
 using Joyersch.Monogame.Logging;
 using Joyersch.Monogame.Ui;
 using Microsoft.Xna.Framework;
-using ResourceIdle.Menu.Backdrops;
 
 namespace ResourceIdle.World;
 

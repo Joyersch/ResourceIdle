@@ -3,9 +3,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using IDrawable = Joyersch.Monogame.IDrawable;
 
-namespace ResourceIdle.World;
+namespace ResourceIdle.World.Island0;
 
-public class Island0 : IWorldBackground
+public sealed class Background : IIslandBackground
 {
     public static Texture2D Texture { get; set; }
     private Vector2 _position;
@@ -13,7 +13,7 @@ public class Island0 : IWorldBackground
     private Vector2 _size;
     public Rectangle Rectangle => new(_position.ToPoint(), _size.ToPoint());
 
-    public Island0(float scale)
+    public Background(float scale)
     {
         _position = Vector2.Zero;
         _scale = scale;

@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 
 namespace ResourceIdle.World;
 
-public class WorldTileData
+public sealed class WorldTileData
 {
     public int Id { get; set; }
 

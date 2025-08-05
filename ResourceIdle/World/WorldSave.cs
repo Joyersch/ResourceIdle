@@ -9,8 +9,6 @@ namespace ResourceIdle.World;
 
 public class WorldSave : ISave
 {
-    public List<CaveData> CaveData { get; set; } = [];
-
     public PlayerData PlayerData { get; set; } = GenerateNewPlayerDataSet();
 
     public int WorldSeed { get; set; } = GenerateSeed();
@@ -20,7 +18,6 @@ public class WorldSave : ISave
     public void Reset()
     {
         PlayerData = GenerateNewPlayerDataSet();
-        CaveData = [];
     }
 
     private static int GenerateSeed()

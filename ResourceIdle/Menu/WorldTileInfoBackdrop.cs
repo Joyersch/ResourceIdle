@@ -51,7 +51,6 @@ public class WorldTileInfo : IDrawable, IMoveable
     {
         Data = data;
         _backdrop.Move(data.Anchor);
-        Log.Information(data.Anchor.ToString());
     }
 
     public void Show()

@@ -2,7 +2,6 @@ using Joyersch.Monogame;
 
 namespace ResourceIdle.World;
 
-public interface IWorldBackground : IMoveable, IDrawable
+public interface IIslandBackground : IMoveable, IDrawable
 {
-
 }
