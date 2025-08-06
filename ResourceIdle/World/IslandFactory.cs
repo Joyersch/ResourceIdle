@@ -7,19 +7,19 @@ namespace ResourceIdle.World;
 public class IslandFactory
 {
     private readonly Scene _scene;
-    private readonly PlayerData _data;
+    private readonly WorldSave _worldSave;
 
-    public IslandFactory(Scene scene, PlayerData data)
+    public IslandFactory(Scene scene, WorldSave worldSave)
     {
         _scene = scene;
-        _data = data;
+        _worldSave = worldSave;
     }
 
     public IIsland GetIsland(int number)
     {
         return number switch
         {
-            _ => new Island0.Island(_scene, _data)
+            _ => new Island0.Island(_scene, _worldSave)
         };
     }
 }

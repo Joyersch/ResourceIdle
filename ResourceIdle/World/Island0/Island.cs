@@ -1,28 +1,35 @@
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using Joyersch.Monogame;
 using Joyersch.Monogame.Logging;
 using Joyersch.Monogame.Storage;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
+using BaseIsland = ResourceIdle.World.Island;
 
 namespace ResourceIdle.World.Island0;
 
-public sealed class Island : Island<Background>
+public sealed class Island : BaseIsland
 {
     private readonly Scene _scene;
     private readonly PlayerData _playerData;
     private List<Cave> _caves;
 
-    public Island(Scene scene, PlayerData playerData) : base(scene, playerData, new Background(scene.Display.Scale * 4f), new DataMapper())
+    public Island(Scene scene, WorldSave worldSave) : base(scene, worldSave.PlayerData,
+        new Background(scene.Display.Scale * 4f), new DataMapper(), new ResourceMapper(worldSave.WorldSeed))
     {
         _scene = scene;
-        _playerData = playerData;
+        _playerData = worldSave.PlayerData;
 
         _caves = new();
         TileClicked += tile =>
         {
             Log.Information(tile.Data.Type.ToString());
+            foreach (var pair in tile.Data.Resources.ToArray())
+            {
+                Log.Information(pair.Key + "->" + pair.Value);
+            }
         };
     }
 
@@ -49,6 +56,7 @@ public sealed class Island : Island<Background>
                 .Apply();
         }
     }
+
     public Cave SpawnCave(WorldTile tile, CaveData caveData = null, Vector2? position = null)
     {
         var data = caveData ?? new CaveData();
@@ -78,6 +86,6 @@ public sealed class Island : Island<Background>
     {
         // ToDo: show cave menu instead
         cave.Data.Generated++;
-        _playerData.Inventory[Resource.Rock]++;
+        // _playerData.Inventory[Resource.Rock]++;
     }
 }

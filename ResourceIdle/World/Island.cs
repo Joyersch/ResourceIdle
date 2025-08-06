@@ -7,18 +7,20 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ResourceIdle.World;
 
-public class Island<T> : IIsland where T : IIslandBackground
+public class Island : IIsland
 {
     protected readonly Scene Scene;
     protected PlayerData PlayerData;
-    protected T Background;
+    protected IIslandBackground Background;
+    private readonly IResourceMapper _resourceMapper;
     protected List<WorldTile> Tiles;
     protected WorldTileSelect TileSelected;
     public Action<WorldTile> TileClicked;
 
     public Rectangle Rectangle => Background.Rectangle;
 
-    public Island(Scene scene, PlayerData playerData, T background, IWorldDataMapper mapper)
+    public Island(Scene scene, PlayerData playerData, IIslandBackground background, IWorldDataMapper dataMapper,
+        IResourceMapper resourceMapper)
     {
         Tiles = new List<WorldTile>();
 
@@ -36,9 +38,11 @@ public class Island<T> : IIsland where T : IIslandBackground
                 var position = topLeft + new Vector2(x * tileScale, y * tileScale);
                 var anchorLeft = topLeft + new Vector2(1 * tileScale, 1 * tileScale);
                 var anchorRight = topLeft + new Vector2(11 * tileScale, 1 * tileScale);
-                var data = new WorldTileData() { Id = y * 20 + x, Anchor = x >= 10 ? anchorLeft : anchorRight };
-                data = mapper.Map(data, x, y);
-                var tile = new WorldTile(data , position,scene.Display.Scale * 4f);
+                var data = new WorldTileData()
+                    { Id = y * 20 + x, Anchor = x >= 10 ? anchorLeft : anchorRight, Position = new Point(x, y) };
+                data = dataMapper.Map(data, x, y);
+                data = resourceMapper.Map(data);
+                var tile = new WorldTile(data, position, scene.Display.Scale * 4f);
                 tile.Clicked += sender =>
                 {
                     var t = (WorldTile)sender;
@@ -50,12 +54,13 @@ public class Island<T> : IIsland where T : IIslandBackground
         }
 
         Background = background;
+        _resourceMapper = resourceMapper;
         Background.Move(topLeft);
 
         Scene = scene;
         PlayerData = playerData;
     }
-    
+
     public void UpdateInteraction(GameTime gameTime, IHitbox toCheck)
     {
         foreach (var tile in Tiles)
