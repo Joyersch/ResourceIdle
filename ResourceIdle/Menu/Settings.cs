@@ -6,7 +6,7 @@ using ResourceIdle.Menu.Backdrops;
 
 namespace ResourceIdle.Menu;
 
-public sealed class Settings : IManageable, IInteractable
+public sealed class Settings : IManageable
 {
     public Rectangle Rectangle => _backdrop.Rectangle;
 

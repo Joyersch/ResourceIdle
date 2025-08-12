@@ -17,7 +17,7 @@ public sealed class Island : BaseIsland
     private List<Cave> _caves;
 
     public Island(Scene scene, WorldSave worldSave) : base(scene, worldSave.PlayerData,
-        new Background(scene.Display.Scale * 4f), new DataMapper(), new ResourceMapper(worldSave.WorldSeed))
+        new Background(scene.Display.Scale * 4f), new DataMapper(), new ResourceMapper())
     {
         _scene = scene;
         _playerData = worldSave.PlayerData;

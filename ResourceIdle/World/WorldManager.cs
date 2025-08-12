@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ResourceIdle.World;
 
-public sealed class WorldManager : IManageable, IInteractable
+public sealed class WorldManager : IManageable
 {
     private readonly Scene _scene;
     public Rectangle Rectangle => Rectangle.Empty;
@@ -13,6 +13,8 @@ public sealed class WorldManager : IManageable, IInteractable
     public Action<WorldTile> TriggeredMenu;
     private IIsland _island;
     private IslandFactory _islandFactory;
+    private IslandWrapper _islandWrapper;
+    private InteractHandler _interactHandler;
 
     public WorldManager(Scene scene, WorldSave save)
     {
@@ -21,7 +23,10 @@ public sealed class WorldManager : IManageable, IInteractable
         FastNoise.SetNoise(save.WorldSeed);
         _islandFactory = new IslandFactory(scene, save);
         _island = _islandFactory.GetIsland(save.SelectedIsland);
+        _islandWrapper = new IslandWrapper(_island);
 
+        _interactHandler = new InteractHandler();
+        _interactHandler.AddInteractable(_islandWrapper, -1000);
         LoadSave(save);
     }
 
@@ -32,7 +37,7 @@ public sealed class WorldManager : IManageable, IInteractable
 
     public void UpdateInteraction(GameTime gameTime, IHitbox toCheck)
     {
-        _island.UpdateInteraction(gameTime, toCheck);
+        _interactHandler.UpdateInteraction(gameTime, toCheck);
     }
 
     public void Update(GameTime gameTime)

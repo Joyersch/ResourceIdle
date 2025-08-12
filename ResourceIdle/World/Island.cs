@@ -17,6 +17,8 @@ public class Island : IIsland
     protected WorldTileSelect TileSelected;
     public Action<WorldTile> TileClicked;
 
+    public Rectangle[] Hitbox => [];
+
     public Rectangle Rectangle => Background.Rectangle;
 
     public Island(Scene scene, PlayerData playerData, IIslandBackground background, IWorldDataMapper dataMapper,
@@ -61,10 +63,16 @@ public class Island : IIsland
         PlayerData = playerData;
     }
 
-    public void UpdateInteraction(GameTime gameTime, IHitbox toCheck)
+    public bool UpdateInteraction(GameTime gameTime, IHitbox toCheck)
     {
+        bool @return = false;
         foreach (var tile in Tiles)
-            tile.UpdateInteraction(gameTime, toCheck);
+        {
+            @return |= tile.UpdateInteraction(gameTime, toCheck);
+            if (@return)
+                break;
+        }
+        return @return;
     }
 
     public virtual void LoadSave(ISave save)

@@ -29,14 +29,9 @@ public sealed class WorldTile : IInteractable, IHitbox, IRectangle
         Data = data;
 
         _mouseActionsMat = new MouseActionsMat(this);
-        _mouseActionsMat.Click += delegate
-        {
-            Clicked?.Invoke(this);
-        };
+        _mouseActionsMat.Click += delegate { Clicked?.Invoke(this); };
     }
 
-    public void UpdateInteraction(GameTime gameTime, IHitbox toCheck)
-    {
-        _mouseActionsMat.UpdateInteraction(gameTime, toCheck);
-    }
+    public bool UpdateInteraction(GameTime gameTime, IHitbox toCheck)
+        => _mouseActionsMat.UpdateInteraction(gameTime, toCheck);
 }

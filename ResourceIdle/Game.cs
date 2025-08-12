@@ -110,7 +110,6 @@ public sealed class Game : ExtendedGame
         }
 
         _keyWasPressed = keyIsPressed;
-        // TODO: Add your update logic here
 
         base.Update(gameTime);
     }

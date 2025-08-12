@@ -78,10 +78,8 @@ public sealed class SettingsButton : IButton
         _mouseMat.Click += _ => Click?.Invoke(this);
     }
 
-    public void UpdateInteraction(GameTime gameTime, IHitbox toCheck)
-    {
-        _mouseMat.UpdateInteraction(gameTime, toCheck);
-    }
+    public bool UpdateInteraction(GameTime gameTime, IHitbox toCheck)
+        => _mouseMat.UpdateInteraction(gameTime, toCheck);
 
     public void Update(GameTime gameTime)
     {
@@ -121,20 +119,6 @@ public sealed class SettingsButton : IButton
     public Vector2 GetPosition()
         => _position;
 
-    Vector2 ISpatial.GetSize()
-    {
-        return GetSize();
-    }
-
-    void IMoveable.Move(Vector2 newPosition)
-    {
-        Move(newPosition);
-    }
-
-    Vector2 ISpatial.GetPosition()
-    {
-        return GetPosition();
-    }
 
     public Vector2 GetSize()
         => _size;
@@ -148,18 +132,10 @@ public sealed class SettingsButton : IButton
     public void ChangeColor(Color[] input)
         => _color = input[0];
 
-    void IColorable.ChangeColor(Color[] input)
-    {
-        ChangeColor(input);
-    }
 
     public int ColorLength()
         => 1;
 
-    Color[] IColorable.GetColor()
-    {
-        return GetColor();
-    }
 
     public Color[] GetColor()
         => [_color];
@@ -171,19 +147,5 @@ public sealed class SettingsButton : IButton
         _drawingScale = Vector2.One * Scale;
         _rectangle = this.GetRectangle();
         _hitbox.SetScale(_drawingScale);
-    }
-
-    Rectangle[] IHitbox.Hitbox => Hitbox;
-
-    void IUpdateable.Update(GameTime gameTime)
-    {
-        Update(gameTime);
-    }
-
-    Rectangle IRectangle.Rectangle => Rectangle;
-
-    void IInteractable.UpdateInteraction(GameTime gameTime, IHitbox toCheck)
-    {
-        UpdateInteraction(gameTime, toCheck);
     }
 }
