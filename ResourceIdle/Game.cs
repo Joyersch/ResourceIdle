@@ -7,6 +7,7 @@ using Joyersch.Monogame.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using ResourceIdle.Menu;
 using ResourceIdle.Menu.Backdrops;
 using ResourceIdle.Menu.Buttons;
 using ResourceIdle.World;
@@ -20,7 +21,9 @@ public sealed class Game : ExtendedGame
 
     private ScaleDeviceHandler _scaleDeviceHandler;
     private WorldManager _worldManager;
+    private MenuManager _menuManager;
     private SettingsManager _settingsManager;
+    private InteractHandler _interactHandler;
 
     private Cursor _cursor;
     private MousePointer _mousePointer;
@@ -58,7 +61,9 @@ public sealed class Game : ExtendedGame
         Scene.Camera.Calculate();
 
         var save = SettingsAndSaveManager.GetSave<WorldSave>();
-        _worldManager = new WorldManager(Scene, save);
+        _interactHandler = new InteractHandler();
+        _worldManager = new WorldManager(Scene, _interactHandler, save);
+        _menuManager = new MenuManager(Scene, _interactHandler);
 
         _cursor = new Cursor(Scene.Display.Scale * 4);
         _mousePointer = new MousePointer(Scene);
@@ -98,8 +103,9 @@ public sealed class Game : ExtendedGame
             _cursor.Update(gameTime);
             _positionListener.Update(gameTime);
 
-            _worldManager.UpdateInteraction(gameTime, _cursor);
+            _interactHandler.UpdateInteraction(gameTime, _cursor);
             _worldManager.Update(gameTime);
+            _menuManager.Update(gameTime);
         }
 
         var keyboardState = Keyboard.GetState();
@@ -122,6 +128,7 @@ public sealed class Game : ExtendedGame
             transformMatrix: Scene.Camera.CameraMatrix);
 
         _worldManager.Draw(SpriteBatch);
+        _menuManager.Draw(SpriteBatch);
         _cursor.Draw(SpriteBatch);
 
         SpriteBatch.End();

@@ -5,7 +5,6 @@ using Joyersch.Monogame.Ui;
 using Joyersch.Monogame.Ui.Buttons;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using IUpdateable = Joyersch.Monogame.IUpdateable;
 
 namespace ResourceIdle.Menu.Buttons;
 
@@ -32,6 +31,7 @@ public sealed class SettingsButton : IButton
     public float Layer { get; set; }
 
     public bool IsHover => _mouseMat.IsHover;
+    public bool IsClicked => MouseActionsMat.LeftClicked;
 
     public event Action<object> Leave;
     public event Action<object> Enter;
@@ -89,25 +89,26 @@ public sealed class SettingsButton : IButton
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        if (!IsHover)
+        if (IsHover && IsClicked)
         {
             spriteBatch.Draw(
                 Texture,
                 _position,
-                _baseImageLocation,
+                _imageLocation,
                 _color,
                 0F,
                 Vector2.Zero,
                 _drawingScale,
                 SpriteEffects.None,
                 Layer);
+
             return;
         }
 
         spriteBatch.Draw(
             Texture,
             _position,
-            _imageLocation,
+            _baseImageLocation,
             _color,
             0F,
             Vector2.Zero,

@@ -16,7 +16,7 @@ public sealed class WorldManager : IManageable
     private IslandWrapper _islandWrapper;
     private InteractHandler _interactHandler;
 
-    public WorldManager(Scene scene, WorldSave save)
+    public WorldManager(Scene scene, InteractHandler interactHandler, WorldSave save)
     {
         _scene = scene;
 
@@ -25,7 +25,7 @@ public sealed class WorldManager : IManageable
         _island = _islandFactory.GetIsland(save.SelectedIsland);
         _islandWrapper = new IslandWrapper(_island);
 
-        _interactHandler = new InteractHandler();
+        _interactHandler = interactHandler;
         _interactHandler.AddInteractable(_islandWrapper, -1000);
         LoadSave(save);
     }
@@ -33,11 +33,6 @@ public sealed class WorldManager : IManageable
     public void LoadSave(WorldSave save)
     {
         _playerData = save.PlayerData;
-    }
-
-    public void UpdateInteraction(GameTime gameTime, IHitbox toCheck)
-    {
-        _interactHandler.UpdateInteraction(gameTime, toCheck);
     }
 
     public void Update(GameTime gameTime)
