@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework.Graphics;
 using ResourceIdle.Menu.Buttons;
 using ResourceIdle.Menu.Drawers;
 using ResourceIdle.World;
-using IDrawable = Joyersch.Monogame.IDrawable;
 
 namespace ResourceIdle.Menu;
 
