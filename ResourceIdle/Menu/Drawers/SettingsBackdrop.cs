@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using IDrawable = Joyersch.Monogame.IDrawable;
 
-namespace ResourceIdle.Menu.Backdrops;
+namespace ResourceIdle.Menu.Drawers;
 
 public sealed class SettingsBackdrop : IDrawable, IMoveable
 {

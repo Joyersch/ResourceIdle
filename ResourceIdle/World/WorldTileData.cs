@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using ResourceIdle.Menu;
 
 namespace ResourceIdle.World;
 
-public sealed class WorldTileData
+public sealed class WorldTileData : IDrawerData
 {
     public int Id { get; set; }
 

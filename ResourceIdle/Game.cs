@@ -8,8 +8,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ResourceIdle.Menu;
-using ResourceIdle.Menu.Backdrops;
 using ResourceIdle.Menu.Buttons;
+using ResourceIdle.Menu.Drawers;
 using ResourceIdle.World;
 using Island0 = ResourceIdle.World.Island0;
 
@@ -62,8 +62,9 @@ public sealed class Game : ExtendedGame
 
         var save = SettingsAndSaveManager.GetSave<WorldSave>();
         _interactHandler = new InteractHandler();
-        _worldManager = new WorldManager(Scene, _interactHandler, save);
         _menuManager = new MenuManager(Scene, _interactHandler);
+        _worldManager = new WorldManager(Scene, _interactHandler, _menuManager, save);
+
 
         _cursor = new Cursor(Scene.Display.Scale * 4);
         _mousePointer = new MousePointer(Scene);

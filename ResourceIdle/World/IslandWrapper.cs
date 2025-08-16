@@ -7,14 +7,9 @@ public class IslandWrapper : IInteractable
 {
     public Rectangle[] Hitbox => _island.Hitbox;
 
-    private IIsland _island;
+    private Island _island;
 
-    public IslandWrapper(IIsland island)
-    {
-        _island = island;
-    }
-
-    public void SetIsland(IIsland island)
+    public void SetIsland(Island island)
         => _island = island;
 
     public bool UpdateInteraction(GameTime gameTime, IHitbox toCheck)

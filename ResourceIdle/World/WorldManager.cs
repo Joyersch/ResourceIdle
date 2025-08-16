@@ -2,37 +2,51 @@ using System;
 using Joyersch.Monogame;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ResourceIdle.Menu;
 
 namespace ResourceIdle.World;
 
 public sealed class WorldManager : IManageable
 {
     private readonly Scene _scene;
+    private readonly MenuManager _menuManager;
     public Rectangle Rectangle => Rectangle.Empty;
-    private PlayerData _playerData;
     public Action<WorldTile> TriggeredMenu;
-    private IIsland _island;
+    private Island _island;
     private IslandFactory _islandFactory;
     private IslandWrapper _islandWrapper;
-    private InteractHandler _interactHandler;
+    private WorldSave _save;
 
-    public WorldManager(Scene scene, InteractHandler interactHandler, WorldSave save)
+    public WorldManager(Scene scene, InteractHandler interactHandler, MenuManager menuManager, WorldSave save)
     {
         _scene = scene;
+        _menuManager = menuManager;
+        _save = save;
+        _islandFactory = new IslandFactory(scene, save);
 
         FastNoise.SetNoise(save.WorldSeed);
-        _islandFactory = new IslandFactory(scene, save);
-        _island = _islandFactory.GetIsland(save.SelectedIsland);
-        _islandWrapper = new IslandWrapper(_island);
 
-        _interactHandler = interactHandler;
-        _interactHandler.AddInteractable(_islandWrapper, -1000);
+        _islandWrapper = new IslandWrapper();
+        interactHandler.AddInteractable(_islandWrapper, -1000);
+        LoadIsland(_save.SelectedIsland);
         LoadSave(save);
+    }
+
+    private void LoadIsland(int number)
+    {
+        _island = _islandFactory.GetIsland(number);
+
+        _island.TileClicked += tile =>
+        {
+            _menuManager.ShowDrawer(DrawersEnum.TileInfo, tile.Data);
+        };
+
+        _islandWrapper.SetIsland(_island);
     }
 
     public void LoadSave(WorldSave save)
     {
-        _playerData = save.PlayerData;
+        _save = save;
     }
 
     public void Update(GameTime gameTime)

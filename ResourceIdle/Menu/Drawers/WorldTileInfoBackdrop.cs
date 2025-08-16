@@ -1,11 +1,9 @@
 using Joyersch.Monogame;
-using Joyersch.Monogame.Ui.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ResourceIdle.World;
 using IDrawable = Joyersch.Monogame.IDrawable;
 
-namespace ResourceIdle.Menu.Backdrops;
+namespace ResourceIdle.Menu.Drawers;
 
 public class WorldTileInfoBackdrop : IDrawable, IMoveable
 {

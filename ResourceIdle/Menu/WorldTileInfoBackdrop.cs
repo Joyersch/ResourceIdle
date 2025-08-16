@@ -3,7 +3,7 @@ using Joyersch.Monogame.Logging;
 using Joyersch.Monogame.Ui.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ResourceIdle.Menu.Backdrops;
+using ResourceIdle.Menu.Drawers;
 using ResourceIdle.World;
 using IDrawable = Joyersch.Monogame.IDrawable;
 

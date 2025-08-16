@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ResourceIdle.World;
 
-public class Island : IIsland
+public class Island : IMoveable, IManageable, IInteractable
 {
     protected readonly Scene Scene;
     protected PlayerData PlayerData;
@@ -15,11 +15,11 @@ public class Island : IIsland
     private readonly IResourceMapper _resourceMapper;
     protected List<WorldTile> Tiles;
     protected WorldTileSelect TileSelected;
-    public Action<WorldTile> TileClicked;
-
     public Rectangle[] Hitbox => [];
 
     public Rectangle Rectangle => Background.Rectangle;
+
+    public event Action<WorldTile> TileClicked;
 
     public Island(Scene scene, PlayerData playerData, IIslandBackground background, IWorldDataMapper dataMapper,
         IResourceMapper resourceMapper)

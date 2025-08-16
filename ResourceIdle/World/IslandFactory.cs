@@ -15,7 +15,7 @@ public class IslandFactory
         _worldSave = worldSave;
     }
 
-    public IIsland GetIsland(int number)
+    public Island GetIsland(int number)
     {
         return number switch
         {
