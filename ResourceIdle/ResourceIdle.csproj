@@ -35,8 +35,8 @@
       <Folder Include="Content\Textures\backdrops\" />
     </ItemGroup>
     <ItemGroup>
-      <Content Include="..\REAME.md">
-        <Link>REAME.md</Link>
+      <Content Include="..\README.md">
+        <Link>README.md</Link>
       </Content>
     </ItemGroup>
     <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
